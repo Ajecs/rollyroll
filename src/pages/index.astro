@@ -1,11 +1,52 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Layout from '../layouts/Layout.astro'
+import { getCollection } from 'astro:content'
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const rolls = await getCollection('rolls')
+
+export const prerender = true
+// De esta forma se define que el indeex es estático y no requiere de renderizado  
 ---
 
-<Layout>
-	<Welcome />
+<Layout title='Roll&Roll / Un mundo de rolls a tu alcance'>
+  <div>
+    <div class='py-6 text-2xl font-secondary'><h2>Rolls</h2></div>
+
+    <section aria-label='Rolls'>
+      <div class='mx-auto max-screen-xl'>
+        <div
+          id='rolls_container'
+          class='grid md:grid-cols-2 gap-x-0 grid-rows-2 md:gap-y-8 mb-8'
+        >
+          {
+            rolls.map((roll) => {
+              const { slug, data } = roll
+              const { title, flavour, description, image, imageLocal, buy } =
+                data
+              return (
+                <article class='flex flex-col md:grid md:grid-cols-[60%_40%] md:grid-rows-1 md:gap-x-4'>
+                  <a
+                    class='transition md:size-full hover:scale-105'
+                    href={`/rolls/${slug}`}
+                  >
+                    <img
+                      transition:name={`img-${slug}`}
+                      transition-animation='slide'
+                      class='object-cover object-left w-full max-w-full rounded-lg md:size-full'
+                      src={imageLocal}
+                      alt={title}
+                    />
+                  </a>
+                  <div class='p-4'>
+                    <h3 class='my-6 text-2xl leading-tight'>{title}</h3>
+                    <p class='my-6 text-lg leading-tight'>{description}</p>
+                  </div>
+                </article>
+              )
+            })
+          }
+        </div>
+      </div>
+    </section>
+  </div>
 </Layout>

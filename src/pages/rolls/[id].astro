@@ -1,0 +1,55 @@
+---
+// [id] permite acceder a la información de los rolls de forma dinánmica
+import { getCollection, render } from 'astro:content'
+import { SHOW_BUY_BUTTON } from 'astro:env/server'
+import Layout from '../../layouts/Layout.astro'
+import BookScore from '../../components/BookScore.astro'
+import BuyButton from '../../components/BuyButton.astro'
+
+export async function getStaticPaths() {
+  const rolls = await getCollection('rolls')
+  return rolls.map((roll) => ({
+    params: { id: roll.slug },
+    props: { roll }
+  }))
+}
+const { roll } = Astro.props,
+  { data, slug } = roll,
+  { title, flavour, description, image, imageLocal, buy } = data
+
+const { Content } = await render(roll)
+
+export const prerender = true
+---
+
+<Layout title=`${title} | Roll&Roll`>
+  <div class='flex flex-col md:max-w-[70%] md:flex-row gap-6 md:gap-12'>
+    <aside class='relative flex flex-col items-center content-center gap-4'>
+      <div id='aside-items_container' class='space-y-4'>
+        <img
+          transition:name={`img-${slug}`}
+          transition-animation='slide'
+          class='md:w-[40dvw] md:h-[40dvh] object-cover object-left rounded-lg h-auto'
+          src={`/${imageLocal}`}
+          alt={title}
+        />
+        <BookScore server:defer id={slug}>
+          <span
+            slot='fallback'
+            class='flex items-center text-sm opacity-70 font-primary'
+            >Cargando puntuación...</span
+          >
+          <!-- Se aplica un fallback que se renderiza mientras se carga la puntuación que evita el salto -->
+        </BookScore>
+        <!-- 
+          Lo anterior es una server island, solo esta parte de la página será renderizada en el servidor
+        -->
+        {SHOW_BUY_BUTTON && <BuyButton server:defer buy={buy} />}
+      </div>
+    </aside>
+    <div class='space-y-4'>
+      <h1>{title}</h1>
+      <div class='prose'><Content /></div>
+    </div>
+  </div>
+</Layout>

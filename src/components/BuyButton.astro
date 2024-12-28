@@ -1,0 +1,21 @@
+---
+const ARGENTINA = 'AR'
+
+const country = Astro.request.headers.get('X-Vercel-IP-Country') || 'AR'
+
+const storeCountry = country === ARGENTINA ? 'argentina' : 'usa'
+const countryName = country === ARGENTINA ? 'Argentina' : 'Estados Unidos'
+
+const { buy } = Astro.props
+const url = buy[storeCountry]
+---
+
+<a
+  href={url}
+  title='Comprar en roll'
+  target='_blank'
+  rel='noopener noreferrer'
+  class='flex items-center gap-2 px-6 py-4 text-white text-accent font-semibold bg-primary hover:bg-primary/80 transition-colors duration-300 rounded-xl'
+>
+  Comprar en Foodie {countryName}
+</a>
