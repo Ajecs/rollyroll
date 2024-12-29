@@ -10,7 +10,7 @@ const rolls = defineCollection({
     image: z.string().url(),
     imageLocal: z.string(),
     buy: z.object({
-      spain: z.string().url(),
+      argentina: z.string().url(),
       usa: z.string().url()
     })
   })
