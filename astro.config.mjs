@@ -2,6 +2,9 @@ import { defineConfig, envField } from 'astro/config'
 import tailwindcss from '@tailwindcss/vite'
 
 
+import vercel from '@astrojs/vercel';
+
+
 // https://astro.build/config
 export default defineConfig({
   vite: {
@@ -15,6 +18,7 @@ export default defineConfig({
       SCORE_API_ENDPOINT: envField.string({ context: 'server', access: 'public' }),
     }
   },
-  output: 'server'
 
+  output: 'server',
+  adapter: vercel()
 })
